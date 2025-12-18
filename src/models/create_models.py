@@ -1,5 +1,6 @@
 import os
 import findspark
+from pyspark.sql.functions import when
 
 findspark.init()
 
@@ -70,6 +71,20 @@ def train_rainfall_model():
 
     # Dự đoán và đánh giá
     predictions = pipeline_model.transform(test_df)
+    predictions_level = predictions.withColumn(
+        "rainfall_level",
+        when(predictions.prediction < 5, "Thấp")
+        .when((predictions.prediction >= 5) & (predictions.prediction <= 20), "Trung bình")
+        .otherwise("Cao")
+    )
+
+    print("\n=== DỰ BÁO MỨC LƯỢNG MƯA ===")
+    predictions_level.select(
+        label_column,
+        "prediction",
+        "rainfall_level"
+    ).show(10, truncate=False)
+
     evaluators = {
         "RMSE": RegressionEvaluator(labelCol=label_column, metricName="rmse"),
         "MAE": RegressionEvaluator(labelCol=label_column, metricName="mae"),
