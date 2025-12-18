@@ -5,7 +5,6 @@ from pyspark.ml.evaluation import RegressionEvaluator
 def evaluate_model(model, df, label_col, model_name, model_path=None):
 
     # Đánh giá mô hình hồi quy tuyến tính
-
     print(f"\n===== ĐÁNH GIÁ MÔ HÌNH: {model_name} =====")
 
     # Dự đoán
